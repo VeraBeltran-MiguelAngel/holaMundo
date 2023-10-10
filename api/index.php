@@ -30,6 +30,11 @@ if ($resource != "task") {
 
 //debemos configurar el content type del contenido de la respuesta (JSON)
 header("Content-type: application/json; charset=UTF-8");
+//objeto de la clase database
+$database= new DataBase("localhost","api_db","root","Kindred1222.");
+//conectarse a la base llamando al metodo creado
+$database->getConnection();
+
 //creamos un objeto de la clase
 $controller = new TaskController;
 //llamamos al metodo(process) de la clase y colocamos sus parametros (metodo usado,id)
