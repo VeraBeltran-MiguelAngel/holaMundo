@@ -1,6 +1,7 @@
 <?php
 //configuramos el strict type cheking para manejar bien los errores(como esta en el index se aplica global)
 declare(strict_types=1);
+
 //mostrar errores
 // ini_set("display_errors", "On"); lo comentamos para tener un error handler
 
@@ -9,6 +10,13 @@ require dirname(__DIR__) . "/vendor/autoload.php";
 
 //especificamos como manejar los errores y usamos el metodo referenciado 
 set_exception_handler("ErrorHandler::handlerException");
+
+//creamos un objeto dotenv llamando al metodo createInmutable de la clase Dotenv (indicamos ruta de archivo)
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+//llamamos al metodo load en ese objeto para cargar los valores del env file
+// en PHP $_ENV super global
+$dotenv->load();
+
 
 
 
@@ -30,10 +38,8 @@ if ($resource != "task") {
 
 //debemos configurar el content type del contenido de la respuesta (JSON)
 header("Content-type: application/json; charset=UTF-8");
-//objeto de la clase database
-$database= new DataBase("localhost","api_db","root","Kindred1222.");
-//conectarse a la base llamando al metodo creado
-$database->getConnection();
+//objeto de la clase database usamos el archivo env
+$database = new DataBase($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"], $_ENV["DB_PASS"]);
 
 //creamos un objeto de la clase
 $controller = new TaskController;
