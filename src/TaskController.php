@@ -2,6 +2,14 @@
 class TaskController
 {
     /**
+     * Inyeccion de dependencias por constructor ya que necesita un objeto de la
+     * clase TaskGateway (en vez de crear uno aqui lo pasamos al constructor)
+     * @param gateway objeto de la clase TaskGateway
+     */
+    public function __construct(private TaskGateway $gateway)
+    {
+    }
+    /**
      * funcion para manejar la peticon y decidir que hacer dependiendo del metodo
      * @param method metodo de la peticion
      * @param id identifica el reurso unico (acepta null) con el signo'?'

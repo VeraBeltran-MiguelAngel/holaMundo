@@ -41,7 +41,10 @@ header("Content-type: application/json; charset=UTF-8");
 //objeto de la clase database usamos el archivo env
 $database = new DataBase($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"], $_ENV["DB_PASS"]);
 
-//creamos un objeto de la clase
-$controller = new TaskController;
+//creamos objeto clase TaskGateway
+$taskGateway=new TaskGateway($database);
+//creamos un objeto de la clase TaskController
+$controller = new TaskController($taskGateway);
+
 //llamamos al metodo(process) de la clase y colocamos sus parametros (metodo usado,id)
 $controller->processRequest($_SERVER['REQUEST_METHOD'], $id);
