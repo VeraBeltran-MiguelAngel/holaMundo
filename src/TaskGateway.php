@@ -26,7 +26,21 @@ class TaskGateway
         $sql = "SELECT * FROM empleados ORDER BY nombre";
         //devuelve un PDOstatement object
         $stmt = $this->conn->query($sql);
-        //devolvemos las filas de la consulta en un arreglo
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //devolvemos las filas de la consulta en un arreglo (tal y como estan los valores en la BD)
+        // return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //si deseas dar formato a los valores que se muestran en el json, en este 
+        //caso los 1 y 0 del atributo activo seran presentados como true o false
+        $data=[]; 
+
+        //obtener el registro como un arreglo asociativo para que retorne un registro individual
+        //recorremos los registros que devuelve el statement cuando ya no hay da false y rompe el ciclo
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            //accedemos al atributo activo del arreglo asociativo y lo convertimos a booleano
+            $row ['activo'] = (bool) $row ['activo'];
+            //guardamos el registro modificado
+            $data[]=$row;
+        }
+         //retornamos el arreglo con los valores modificados
+        return $data;
     }
 }
