@@ -21,8 +21,6 @@ $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
 
-
-
 //imprime el url de nuestro archivo (Obtinene solo el path no importa lo que coloques en la url)
 $path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 

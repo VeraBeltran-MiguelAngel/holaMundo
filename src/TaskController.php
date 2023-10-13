@@ -13,7 +13,7 @@ class TaskController
      * funcion para manejar la peticon y decidir que hacer dependiendo del metodo
      * @param method metodo de la peticion
      * @param id identifica el reurso unico (acepta null) con el signo'?'
-     * @return void (no retorna nada)
+     * @return void (no retorna nada)   
      */
     public function processRequest(string $method, ?string $id): void
     {
@@ -23,8 +23,10 @@ class TaskController
                 //listar registros de la tabla task accedemos al getAll del objeto gateway como retorna un arreglo lo convertimos a JSON
                 echo json_encode($this->gateway->getAll());
             } elseif ($method == "POST") {
-                //crear task
-                echo "create";
+                //crear empleado, decodificamos el json y lo transforma a un arreglo asociativo, 
+                //si envias informacion erronea devuelve null, pero necesitamos devolver solo un arreglo vacio por eso hacemos un cast a array simple
+                $data=(array)json_decode(file_get_contents("php://input"),true);
+                var_dump($data);
             } else {
                 //metodos que estan permitidos
                 $this->respondMethodNotAllowed("GET, POST");
