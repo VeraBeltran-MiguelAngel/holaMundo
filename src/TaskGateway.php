@@ -23,7 +23,7 @@ class TaskGateway
      */
     public function getAll(): array
     {
-        $sql = "SELECT * FROM task ORDER BY name";
+        $sql = "SELECT * FROM empleados ORDER BY nombre";
         //devuelve un PDOstatement object
         $stmt = $this->conn->query($sql);
         //devolvemos las filas de la consulta en un arreglo

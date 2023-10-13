@@ -1,7 +1,8 @@
 <?php
+
 //configuramos el strict type cheking para manejar bien los errores(como esta en el index se aplica global)
 declare(strict_types=1);
-
+header("Access-Control-Allow-Origin: *");
 //mostrar errores
 // ini_set("display_errors", "On"); lo comentamos para tener un error handler
 
@@ -30,7 +31,7 @@ $resource = $parts[3]; //task
 $id = $parts[4] ?? null; //id de la task si no hay coloca null
 
 //si el resource es otra liga diferente a task debe arrojar un status 400
-if ($resource != "task") {
+if ($resource != "empleados") {
     // header("{$_SERVER['SERVER_PROTOCOL']} 404 Not found"); primera opcion
     http_response_code(404); // 2° forma
     exit;
