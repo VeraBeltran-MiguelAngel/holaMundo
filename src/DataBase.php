@@ -13,7 +13,10 @@ class DataBase
         $dsn = "mysql:host={$this->host};dbname={$this->name};charset=utf8";
         //creamos objeto PDO pasamos usuario y contraseña y un error exc si ocurre error al conectarse
         return new PDO($dsn, $this->user, $this->password, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            //para evitar que los valores numericos del json se hagan cadenas
+            PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_STRINGIFY_FETCHES => false
         ]);
     }
 }
