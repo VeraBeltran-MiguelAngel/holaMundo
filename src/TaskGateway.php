@@ -20,9 +20,11 @@ class TaskGateway
 
     /**
      * Mostrar registros tabla task
+     * @return data de tipo arreglo
      */
     public function getAll(): array
     {
+        //aqui te pueden hacer sql injection
         $sql = "SELECT * FROM empleados ORDER BY nombre";
         //devuelve un PDOstatement object
         $stmt = $this->conn->query($sql);
@@ -30,17 +32,47 @@ class TaskGateway
         // return $stmt->fetchAll(PDO::FETCH_ASSOC);
         //si deseas dar formato a los valores que se muestran en el json, en este 
         //caso los 1 y 0 del atributo activo seran presentados como true o false
-        $data=[]; 
+        $data = [];
 
         //obtener el registro como un arreglo asociativo para que retorne un registro individual
         //recorremos los registros que devuelve el statement cuando ya no hay da false y rompe el ciclo
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             //accedemos al atributo activo del arreglo asociativo y lo convertimos a booleano
-            $row ['activo'] = (bool) $row ['activo'];
+            $row['activo'] = (bool) $row['activo'];
             //guardamos el registro modificado
-            $data[]=$row;
+            $data[] = $row;
         }
-         //retornamos el arreglo con los valores modificados
+        //retornamos el arreglo con los valores modificados
+        return $data;
+    }
+
+    /**
+     * Mostrar un unico registro dependiendo el ID
+     * @param id 
+     * @return data puede ser de tipo arreglo o falso en caso de no encontrar coincidencias
+     */
+    public function get(string $id): array | false
+    {
+        //!para evitar sql injection
+        $sql = "SELECT * FROM empleados WHERE id=:id";
+        // crear el statemnet
+        $stmt= $this->conn->prepare($sql);
+
+        //bindValuevinula un valor a un parametro
+        //para vincular el id placeholder (argumento en la consulta) CON el parametro de la funcion
+        //debe ser insertado en el SQL string como integer
+        $stmt->bindValue(":id",$id,PDO::PARAM_INT);
+        //ejecutar statemnt
+        $stmt->execute();
+        //tener los datos en un array asociativo (retorna falso en caso de no tener registros)
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        //si encuentra un registro que coincida con el id
+        if ($data !== false) {
+            //convertimos el atributo activo a boolean
+            $data['activo'] = (bool) $data['activo'];
+        }
+        //retornamos el registro transformado
         return $data;
     }
 }

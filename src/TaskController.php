@@ -17,6 +17,7 @@ class TaskController
      */
     public function processRequest(string $method, ?string $id): void
     {
+        //cuando la ruta no contiene ID (insertar o mostrar todos los registros)
         if ($id === null) {
             if ($method == "GET") {
                 //listar registros de la tabla task accedemos al getAll del objeto gateway como retorna un arreglo lo convertimos a JSON
@@ -28,12 +29,14 @@ class TaskController
                 //metodos que estan permitidos
                 $this->respondMethodNotAllowed("GET, POST");
             }
-        } else {
+        }
+        //cuando la ruta si tiene un ID (buscas un registro especifico o vas a editar o eliminar)
+        else {
             //quiere decir que si existe la task (id) y agregamos un switch para ver que hacer
             switch ($method) {
-                    //si es get solo mostramos la task especifica
+                    //si es get solo mostramos el empleado que coincida con el ID
                 case 'GET':
-                    echo "show $id";
+                    echo json_encode($this->gateway->get($id));
                     break;
                     //si es patch editamos la task especifica
                 case 'PATCH':
