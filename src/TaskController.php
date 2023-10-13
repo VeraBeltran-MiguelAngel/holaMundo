@@ -17,7 +17,7 @@ class TaskController
      */
     public function processRequest(string $method, ?string $id): void
     {
-        //cuando la ruta no contiene ID (insertar o mostrar todos los registros)
+        //*cuando la ruta no contiene ID (insertar o mostrar todos los registros)
         if ($id === null) {
             if ($method == "GET") {
                 //listar registros de la tabla task accedemos al getAll del objeto gateway como retorna un arreglo lo convertimos a JSON
@@ -30,13 +30,22 @@ class TaskController
                 $this->respondMethodNotAllowed("GET, POST");
             }
         }
-        //cuando la ruta si tiene un ID (buscas un registro especifico o vas a editar o eliminar)
+        //*cuando la ruta si tiene un ID (buscas un registro especifico o vas a editar o eliminar)
         else {
+            //Debemos validar que el ID  que si existe en el url , exista en la tabla empleados de la BD
+            $empleado = $this->gateway->get($id);
+
+            if ($empleado === false) {
+                //si el id del empleado no existe  llamamamos al metodo not found
+                $this->respondNotFound($id);
+                //salimos del metodo processRequest para no continuar evaluando
+                return;
+            }
             //quiere decir que si existe la task (id) y agregamos un switch para ver que hacer
             switch ($method) {
                     //si es get solo mostramos el empleado que coincida con el ID
                 case 'GET':
-                    echo json_encode($this->gateway->get($id));
+                    echo json_encode($empleado);
                     break;
                     //si es patch editamos la task especifica
                 case 'PATCH':
@@ -57,9 +66,18 @@ class TaskController
      */
     private function respondMethodNotAllowed(string $allowed_methods): void
     {
-        // si envias otro metodo diferente a la url http://localhost/holamundo/api/task debe mostrar error
+        // si envias otro metodo diferente a la url http://localhost/holamundo/api/empleados debe mostrar error
         http_response_code(405);
         //y enviamos al header los metodos que estan permitidos
         header("Allow: $allowed_methods");
+    }
+    /**
+     * Metodo que envia un not found si el id que pasas en la url no existe en la tabla empleados de la BD
+     */
+    private function respondNotFound(string $id): void
+    {
+        // si envias un id que no existe muestra el error 404
+        http_response_code(404);
+        echo json_encode(["mensaje" => "Empleado con id: $id no encontrado"]);
     }
 }

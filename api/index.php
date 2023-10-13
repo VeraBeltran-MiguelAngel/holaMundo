@@ -2,12 +2,14 @@
 
 //configuramos el strict type cheking para manejar bien los errores(como esta en el index se aplica global)
 declare(strict_types=1);
+//permite que angular  se comunique con nuestra API
 header("Access-Control-Allow-Origin: *");
+
 //mostrar errores
 // ini_set("display_errors", "On"); lo comentamos para tener un error handler
 
 //cargamos nuestras clase controladoras automaticamente con composer autoload
-require dirname(__DIR__) . "/vendor/autoload.php";
+require dirname(__DIR__) ."/vendor/autoload.php";
 
 //especificamos como manejar los errores y usamos el metodo referenciado 
 set_exception_handler("ErrorHandler::handlerException");
