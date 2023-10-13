@@ -19,8 +19,8 @@ class TaskController
     {
         if ($id === null) {
             if ($method == "GET") {
-                //debemos mostrar las task
-                echo "index";
+                //listar registros de la tabla task accedemos al getAll del objeto gateway como retorna un arreglo lo convertimos a JSON
+                echo json_encode($this->gateway->getAll());
             } elseif ($method == "POST") {
                 //crear task
                 echo "create";
