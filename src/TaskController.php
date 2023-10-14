@@ -25,8 +25,11 @@ class TaskController
             } elseif ($method == "POST") {
                 //crear empleado, decodificamos el json y lo transforma a un arreglo asociativo, 
                 //si envias informacion erronea devuelve null, pero necesitamos devolver solo un arreglo vacio por eso hacemos un cast a array simple
-                $data=(array)json_decode(file_get_contents("php://input"),true);
-                var_dump($data);
+                $data = (array)json_decode(file_get_contents("php://input"), true);
+                //insertamos el nuevo registro y guardamos su id por que el create devuelve un id
+                $id =  $this->gateway->create($data);
+                //mensaje de exito
+                $this->respondCreated($id);
             } else {
                 //metodos que estan permitidos
                 $this->respondMethodNotAllowed("GET, POST");
@@ -81,5 +84,16 @@ class TaskController
         // si envias un id que no existe muestra el error 404
         http_response_code(404);
         echo json_encode(["mensaje" => "Empleado con id: $id no encontrado"]);
+    }
+
+    /**
+     * Metodo que envia el estatus creado
+     */
+
+    private function respondCreated(string $id): void
+    {
+        // registro creado
+        http_response_code(201);
+        echo json_encode(["mensaje" => "Empleado con id: $id creado exitosamente"]);
     }
 }

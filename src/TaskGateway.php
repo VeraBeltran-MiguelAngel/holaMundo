@@ -56,12 +56,12 @@ class TaskGateway
         //!para evitar sql injection
         $sql = "SELECT * FROM empleados WHERE id=:id";
         // crear el statemnet
-        $stmt= $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);
 
         //bindValuevinula un valor a un parametro
         //para vincular el id placeholder (argumento en la consulta) CON el parametro de la funcion
         //debe ser insertado en el SQL string como integer
-        $stmt->bindValue(":id",$id,PDO::PARAM_INT);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         //ejecutar statemnt
         $stmt->execute();
         //tener los datos en un array asociativo (retorna falso en caso de no tener registros)
@@ -74,5 +74,37 @@ class TaskGateway
         }
         //retornamos el registro transformado
         return $data;
+    }
+
+    /**
+     * Metodo para insertar empleados
+     * @param data recibe los datos ingresados por el usuario en un arreglo
+     * @return string devuelve el id del ultimo registro como string
+     */
+    public function create(array $data) :string
+    {
+        $sql = "INSERT INTO empleados (nombre, correo, activo, rango) 
+        VALUES (:nombre, :correo, :activo, :rango)";
+
+        $stmt = $this->conn->prepare($sql);
+        //vincular el parametro nombre con el  valor que viene del arreglo se vincula de tipo string
+        $stmt->bindValue(":nombre", $data["nombre"], PDO::PARAM_STR);
+
+        //si el rango es nulo (configuramos este atributo para que acepte nulos en la BD)
+        if (empty($data["rango"])) {
+            //vinculamos el parametro a un valor nulo
+            $stmt->bindValue(":rango", null, PDO::PARAM_NULL);
+        }else{
+            $stmt->bindValue(":rango",$data["rango"],PDO::PARAM_INT);
+        }
+
+        //el atributo activo(por defecto falso) es boolean por lo tanto se vincula a aun boolean
+        //el simbolo ?? asigna un false por defecto si viene vacio
+        $stmt->bindValue(":activo",$data["activo"] ?? false,PDO::PARAM_BOOL);
+
+        $stmt->execute();
+
+        //devoovemos el id del registro que acaba de ser insertado por defecto regresa un string
+        return $this->conn->lastInsertId();
     }
 }
