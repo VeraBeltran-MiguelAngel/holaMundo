@@ -76,7 +76,8 @@ class TaskController
                         //aborta el update con datos invalidos
                         return;
                     }
-                    echo "update $id";
+                    //llamar al metodo actualizar 
+                    $this->gateway->update($id,$data);
                     break;
                     // eliminamos la task especifica
                 case 'DELETE':

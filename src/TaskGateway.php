@@ -111,4 +111,41 @@ class TaskGateway
         //devoovemos el id del registro que acaba de ser insertado por defecto regresa un string
         return $this->conn->lastInsertId();
     }
+
+    /**
+     * Metodo para actualizar empleados
+     * 
+     */
+
+    public function update(string $id, array $data)
+    {
+        $fields = [];
+        //si el nombre no esta vacio agregamos lo añadimos añ arreglo de campos
+        if (!empty($data["nombre"])) {
+            //al atributo nombre le asignamos el "nombre" que viene como parametro de tipo string
+            $fields["nombre"] = [$data["nombre"], PDO::PARAM_STR];
+        }
+
+        //comprueba el correo
+        if (!empty($data["correo"])) {
+            $fields["correo"] = [$data["correo"], PDO::PARAM_STR];
+        }
+
+        //comprobar que el key activo no este vacio en el arreglo asociativo
+        if (array_key_exists("activo", $data)) {
+            //al atributo activo le asignamos el "activo" que viene como parametro de tipo bool
+            $fields["activo"] = [$data["activo"], PDO::PARAM_BOOL];
+        }
+
+        //comprobar que el key rango que no este vacio (por default acepta nulos)
+        if (array_key_exists("rango", $data)) {
+            //al atributo rango le asignamos el "rango" que viene como parametro de tipo int
+            // (operador ternario ? ) si el rango viene como nulo especificamos el tipo de dato nulo
+            // de lo contrario colocamos un tipo entero
+            $fields["rango"] = [$data["rango"], $data["rango"] === null ? PDO::PARAM_NULL : PDO::PARAM_INT];
+        }
+
+        print_r($fields);
+        exit;
+    }
 }
