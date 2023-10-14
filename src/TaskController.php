@@ -26,6 +26,17 @@ class TaskController
                 //crear empleado, decodificamos el json y lo transforma a un arreglo asociativo, 
                 //si envias informacion erronea devuelve null, pero necesitamos devolver solo un arreglo vacio por eso hacemos un cast a array simple
                 $data = (array)json_decode(file_get_contents("php://input"), true);
+
+                //devolvemos un mensaje de error si los datos a insertar son invalidos
+                $errors = $this->getValidationErrors($data);
+
+                // si los errores no estan vacios quiere decir que si los hay
+                if(!empty($errors)){
+                    //llamar al metodo que maneja los errores
+                    $this->respondUnprocessableEntity($errors);
+                    //aborta el insert con datos invalidos
+                    return;
+                }
                 //insertamos el nuevo registro y guardamos su id por que el create devuelve un id
                 $id =  $this->gateway->create($data);
                 //mensaje de exito
@@ -66,6 +77,16 @@ class TaskController
             }
         }
     }
+
+    /**
+     * Metodo para indicar que los datos no son procesables para la tabla
+     */
+    private function respondUnprocessableEntity(array $errors): void{
+        http_response_code(422);
+        //para el cuerpo de la respuesta enviamos el json con los errores de validacion
+        echo json_encode(["errors" => $errors]);
+    }
+
     /**
      * funcion para manejar los metodos que estan permitidos
      */
@@ -95,5 +116,27 @@ class TaskController
         // registro creado
         http_response_code(201);
         echo json_encode(["mensaje" => "Empleado con id: $id creado exitosamente"]);
+    }
+
+    /**
+     * Validar datos antes de insertar si son erroneos
+     */
+    private function getValidationErrors(array $data): array
+    {
+        $errors = [];
+
+        //validar los campos que deben ser llenados
+        if (empty($data["nombre"])) {
+            $errors[] = "el nombre no debe ser nulo";
+        }
+        //validar que el rango no este vacio
+        if (!empty($data["rango"])) {
+            //como no es vacio validamos que sea integer
+            if(filter_var($data["rango"],FILTER_VALIDATE_INT) === false){
+                $errors[] = "el rango debe ser un entero";
+            }
+        }
+
+        return $errors;
     }
 }
