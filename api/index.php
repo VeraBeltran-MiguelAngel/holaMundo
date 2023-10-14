@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 //cargamos nuestras clase controladoras automaticamente con composer autoload
 require dirname(__DIR__) ."/vendor/autoload.php";
 
+//mandamos a llamar la nueva funcion de nuestro archivo ErrorHandler
+set_exception_handler("ErrorHandler::handleError");
 //especificamos como manejar los errores y usamos el metodo referenciado 
 set_exception_handler("ErrorHandler::handlerException");
 
