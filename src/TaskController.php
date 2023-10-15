@@ -68,7 +68,7 @@ class TaskController
                     //si envias informacion erronea devuelve null, pero necesitamos devolver solo un arreglo vacio por eso hacemos un cast a array simple
                     $data = (array)json_decode(file_get_contents("php://input"), true);
                     //devolvemos un mensaje de error si los datos a actualizar son invalidos, false por que es un registro ya existente
-                    $errors = $this->getValidationErrors($data,false);
+                    $errors = $this->getValidationErrors($data, false);
                     // si los errores no estan vacios quiere decir que si los hay
                     if (!empty($errors)) {
                         //llamar al metodo que maneja los errores
@@ -76,8 +76,10 @@ class TaskController
                         //aborta el update con datos invalidos
                         return;
                     }
-                    //llamar al metodo actualizar 
-                    $this->gateway->update($id,$data);
+                    //llamar al metodo actualizar como devuleve numero de filas a actualizar guiardamos la cantidad
+                    $rows = $this->gateway->update($id, $data);
+                    //imprimir mensaje de exito
+                    echo json_encode(["mensaje" => "Empleado actualizado", "cantidad de filas: " => $rows]);
                     break;
                     // eliminamos la task especifica
                 case 'DELETE':

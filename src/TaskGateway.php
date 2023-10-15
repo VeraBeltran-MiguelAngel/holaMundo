@@ -114,10 +114,12 @@ class TaskGateway
 
     /**
      * Metodo para actualizar empleados
-     * 
+     * @param id empleado a actualizar
+     * @param data nuevos datos
+     * @return int devuelve las cantidad de filas que fueron actualizadas
      */
 
-    public function update(string $id, array $data)
+    public function update(string $id, array $data) : int
     {
         $fields = [];
         //si el nombre no esta vacio agregamos lo añadimos añ arreglo de campos
@@ -145,7 +147,38 @@ class TaskGateway
             $fields["rango"] = [$data["rango"], $data["rango"] === null ? PDO::PARAM_NULL : PDO::PARAM_INT];
         }
 
-        print_r($fields);
-        exit;
+        //para evitar construir una consulta SQL con campos vacios
+        //ejemplo de consulta construida UPDATE empleados SET nombre = :nombre, correo = :correo, activo = :activo, rango = :rango WHERE id = :id
+        if (empty($fields)) {
+            // si no hay filas para actualizar retornamos cero
+            return 0;
+        } else {
+            //si los campos a actualizar no estan vacios continuamos a construir el string de la actualizacion
+            //queremos un set statement para cada columna
+            $sets = array_map(function ($value) {
+                return "$value = :$value";
+                //accedemos a los keys del arreglo fiel que ya contiene datos
+            }, array_keys($fields));
+
+            $sql = "UPDATE empleados"
+                . " SET " . implode(", ", $sets)
+                . " WHERE id = :id";
+
+            // Crear statement de CONSULTA
+            $stmt = $this->conn->prepare($sql);
+            //vincular el valor del id con el parametro
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+
+            //para los demas parametros tenemos que usar el arreglo field
+            foreach ($fields as $name => $values) {
+                //valor que queremos vincular , tipo de dato PDO, valores que añadimos cuando creamos el arreglo anteriormente
+                $stmt->bindValue(":$name", $values[0], $values[1]);
+            }
+
+            //ejecutar consulta
+            $stmt->execute();
+            //retornamos el numero de filas que hemos actualizado
+            return $stmt->rowCount();
+        }
     }
 }
