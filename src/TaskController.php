@@ -83,7 +83,10 @@ class TaskController
                     break;
                     // eliminamos la task especifica
                 case 'DELETE':
-                    echo "delete $id";
+                    // almacenar el numero de filas eliminadas
+                    $rows = $this->gateway->delete($id);
+                    echo json_encode(["mensaje" => "Empleado eliminado", "cantidad de filas eliminadas:" => $rows]);
+
                     break;
                 default:
                     // si mandas un post con id te dice que solo esta permitido get,patch y delete

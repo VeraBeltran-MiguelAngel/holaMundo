@@ -119,7 +119,7 @@ class TaskGateway
      * @return int devuelve las cantidad de filas que fueron actualizadas
      */
 
-    public function update(string $id, array $data) : int
+    public function update(string $id, array $data): int
     {
         $fields = [];
         //si el nombre no esta vacio agregamos lo añadimos añ arreglo de campos
@@ -180,5 +180,23 @@ class TaskGateway
             //retornamos el numero de filas que hemos actualizado
             return $stmt->rowCount();
         }
+    }
+
+    /**
+     * Metodo para eliminar empleado
+     */
+
+    public function delete(string $id): int
+    {
+        $sql = "DELETE FROM empleados
+        WHERE id =:id";
+
+        $stmt = $this->conn->prepare($sql);
+
+        //vincular id del parametro como int
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        //devolvemos el numero de filas eliminadas
+        return $stmt->rowCount();
     }
 }
