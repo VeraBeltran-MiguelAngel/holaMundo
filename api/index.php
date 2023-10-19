@@ -48,6 +48,12 @@ if ($resource != "empleados") {
     exit;
 }
 
+
+//peticion del api key antes de contestar una peticion
+$api_key = $_GET["api-key"];
+echo $api_key;
+exit;
+
 //debemos configurar el content type del contenido de la respuesta (JSON)
 header("Content-type: application/json; charset=UTF-8");
 //objeto de la clase database usamos el archivo env
